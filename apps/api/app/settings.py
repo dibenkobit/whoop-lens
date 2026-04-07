@@ -1,16 +1,15 @@
 from functools import lru_cache
+from typing import Annotated
 
 from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     database_url: str = Field(..., alias="DATABASE_URL")
-    # str | list[str] prevents pydantic-settings from attempting JSON decode on
-    # the raw env value; the field_validator then normalises to list[str].
-    cors_origin: str | list[str] = Field(
+    cors_origin: Annotated[list[str], NoDecode] = Field(
         default_factory=lambda: ["http://localhost:3000"],
         alias="CORS_ORIGIN",
     )

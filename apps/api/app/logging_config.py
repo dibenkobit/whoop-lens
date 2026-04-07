@@ -20,10 +20,10 @@ def configure_logging(level: str = "INFO") -> None:
         wrapper_class=structlog.make_filtering_bound_logger(
             logging.getLevelNamesMapping().get(level.upper(), logging.INFO)
         ),
-        logger_factory=structlog.PrintLoggerFactory(),
+        logger_factory=structlog.WriteLoggerFactory(),
         cache_logger_on_first_use=True,
     )
 
 
 def get_logger(name: str) -> structlog.stdlib.BoundLogger:
-    return structlog.get_logger(name)  # type: ignore[no-any-return]
+    return structlog.get_logger(name)
