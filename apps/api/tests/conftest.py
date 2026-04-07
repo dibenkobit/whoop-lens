@@ -49,6 +49,24 @@ async def _test_engine() -> AsyncIterator[AsyncEngine]:
     await engine.dispose()
 
 
+@pytest_asyncio.fixture(scope="session")
+async def _create_schema(_test_engine: AsyncEngine) -> None:
+    """Ensure schema exists for router tests that use ASGI transport.
+
+    The session-scoped _test_engine already creates/drops schema, so this
+    fixture simply depends on it to guarantee schema is ready.
+    """
+    return None
+
+
+@pytest_asyncio.fixture(scope="session")
+async def test_session_factory(
+    _test_engine: AsyncEngine,
+) -> async_sessionmaker[AsyncSession]:
+    """Expose a sessionmaker bound to the test engine for dependency overrides."""
+    return async_sessionmaker(_test_engine, expire_on_commit=False, class_=AsyncSession)
+
+
 @pytest_asyncio.fixture(loop_scope="session")
 async def db_session(_test_engine: AsyncEngine) -> AsyncIterator[AsyncSession]:
     """Per-test session that rolls back at the end."""
