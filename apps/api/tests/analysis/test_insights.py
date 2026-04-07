@@ -76,3 +76,40 @@ def test_run_insight_rules_returns_only_triggered() -> None:
     assert all(r is not None for r in results)
     kinds = {r.kind for r in results}
     assert "undersleep" in kinds
+
+
+def test_insight_overtraining_triggers() -> None:
+    f = _happy_frames()
+    # Rows 0-4: high strain, next-day recovery is low (rows 1-5 = 25%)
+    # Rows 6+: no high strain, high recovery (80%) → baseline is dominated by high values
+    f.cycles.loc[:, "Recovery score %"] = 80.0
+    f.cycles.loc[:, "Day Strain"] = 8.0
+    f.cycles.loc[:5, "Day Strain"] = 16.0   # high-strain days
+    f.cycles.loc[1:6, "Recovery score %"] = 25.0  # next-day recovery after strain
+    from app.analysis.insights import insight_overtraining
+    insight = insight_overtraining(f)
+    assert insight is not None
+    assert insight.kind == "overtraining"
+
+
+def test_insight_sick_episodes_triggers() -> None:
+    f = _happy_frames()
+    f.cycles.loc[f.cycles.index[0], "Recovery score %"] = 5.0
+    f.cycles.loc[f.cycles.index[0], "Heart rate variability (ms)"] = 40.0
+    f.cycles.loc[f.cycles.index[0], "Resting heart rate (bpm)"] = 80.0
+    from app.analysis.insights import insight_sick_episodes
+    insight = insight_sick_episodes(f)
+    assert insight is not None
+    assert insight.kind == "sick_episodes"
+
+
+def test_insight_travel_impact_triggers() -> None:
+    f = _happy_frames()
+    f.cycles.loc[:5, "Cycle timezone"] = "UTC+08:00"
+    f.cycles.loc[:5, "Recovery score %"] = 50.0
+    f.cycles.loc[6:, "Cycle timezone"] = "UTC+05:00"
+    f.cycles.loc[6:, "Recovery score %"] = 80.0
+    from app.analysis.insights import insight_travel_impact
+    insight = insight_travel_impact(f)
+    assert insight is not None
+    assert insight.kind == "travel_impact"

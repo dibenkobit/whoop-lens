@@ -94,17 +94,91 @@ def insight_late_chronotype(f: ParsedFrames) -> Insight | None:
     )
 
 
-# Stubs to be filled in subsequent tasks (Tasks 13-14)
-def insight_overtraining(_f: ParsedFrames) -> Insight | None:
-    return None
+def insight_overtraining(f: ParsedFrames) -> Insight | None:
+    c = f.cycles.sort_values("Cycle start time").reset_index(drop=True)
+    if len(c) < 5:
+        return None
+    high_strain_idx = c.index[c["Day Strain"] > 15].tolist()  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType]
+    if not high_strain_idx:
+        return None
+    next_recoveries: list[float] = []
+    for i in high_strain_idx:  # pyright: ignore[reportUnknownVariableType]
+        if i + 1 < len(c):
+            v = c.loc[i + 1, "Recovery score %"]  # pyright: ignore[reportUnknownVariableType]
+            if v is not None:
+                next_recoveries.append(float(v))  # pyright: ignore[reportUnknownArgumentType]
+    if not next_recoveries:
+        return None
+    baseline = float(c["Recovery score %"].dropna().mean() or 0.0)  # pyright: ignore[reportUnknownMemberType, reportArgumentType, reportUnknownArgumentType]
+    after = sum(next_recoveries) / len(next_recoveries)
+    delta = baseline - after
+    if delta < 5:
+        return None
+    return Insight(
+        kind="overtraining",
+        severity="medium",
+        title="Big strain days drag the next day",
+        body=(
+            f"After days with strain over 15, your recovery the next morning averages "
+            f"{round(after)}% — about {round(delta)} points below your usual baseline of {round(baseline)}%. "
+            f"Consider a recovery day after strenuous efforts."
+        ),
+        highlight=InsightHighlight(value=f"-{round(delta)}", unit="pp"),
+    )
 
 
-def insight_sick_episodes(_f: ParsedFrames) -> Insight | None:
-    return None
+def insight_sick_episodes(f: ParsedFrames) -> Insight | None:
+    c = f.cycles
+    if c["Recovery score %"].dropna().empty:  # pyright: ignore[reportUnknownMemberType]
+        return None
+    hrv_med = float(c["Heart rate variability (ms)"].median())  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType, reportArgumentType]
+    rhr_med = float(c["Resting heart rate (bpm)"].median())  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType, reportArgumentType]
+    mask = (  # pyright: ignore[reportUnknownVariableType]
+        (c["Recovery score %"] < 30)
+        & (c["Heart rate variability (ms)"] < hrv_med * 0.7)
+        & (c["Resting heart rate (bpm)"] > rhr_med * 1.15)
+    )
+    n = int(mask.sum())  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+    if n == 0:
+        return None
+    return Insight(
+        kind="sick_episodes",
+        severity="low",
+        title=f"{n} likely illness day{'s' if n > 1 else ''} detected",
+        body=(
+            "On these days HRV crashed, resting heart rate spiked, and recovery dropped "
+            "below 30 — typical signs your body is fighting something. Rest is the right "
+            "call."
+        ),
+        highlight=InsightHighlight(value=str(n)),
+    )
 
 
-def insight_travel_impact(_f: ParsedFrames) -> Insight | None:
-    return None
+def insight_travel_impact(f: ParsedFrames) -> Insight | None:
+    c = f.cycles
+    tzs = c["Cycle timezone"].dropna()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+    if tzs.empty:  # pyright: ignore[reportUnknownMemberType]
+        return None
+    home_tz = tzs.value_counts().idxmax()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+    away_mask = c["Cycle timezone"] != home_tz  # pyright: ignore[reportUnknownVariableType]
+    if away_mask.sum() < 3:  # pyright: ignore[reportUnknownMemberType]
+        return None
+    rec_home = float(c.loc[~away_mask, "Recovery score %"].dropna().mean() or 0.0)  # pyright: ignore[reportUnknownMemberType, reportArgumentType, reportUnknownArgumentType]
+    rec_away = float(c.loc[away_mask, "Recovery score %"].dropna().mean() or 0.0)  # pyright: ignore[reportUnknownMemberType, reportArgumentType, reportUnknownArgumentType]
+    delta = rec_home - rec_away
+    if delta < 3:
+        return None
+    return Insight(
+        kind="travel_impact",
+        severity="medium",
+        title="Travel hits your recovery",
+        body=(
+            f"You spent {int(away_mask.sum())} days outside your home timezone "  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+            f"({home_tz}). Recovery dropped from {round(rec_home)}% at home to "
+            f"{round(rec_away)}% on the road."
+        ),
+        highlight=InsightHighlight(value=f"-{round(delta)}", unit="pp"),
+    )
 
 
 def insight_dow_pattern(_f: ParsedFrames) -> Insight | None:
