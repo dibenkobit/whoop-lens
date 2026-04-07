@@ -113,3 +113,37 @@ def test_insight_travel_impact_triggers() -> None:
     insight = insight_travel_impact(f)
     assert insight is not None
     assert insight.kind == "travel_impact"
+
+
+def test_insight_dow_pattern_triggers() -> None:
+    f = _happy_frames()
+    # Make Wednesdays much worse
+    dow = f.cycles["Cycle start time"].dt.day_name()
+    f.cycles.loc[dow == "Wednesday", "Recovery score %"] = 40.0
+    f.cycles.loc[dow != "Wednesday", "Recovery score %"] = 75.0
+    from app.analysis.insights import insight_dow_pattern
+    insight = insight_dow_pattern(f)
+    assert insight is not None
+    assert insight.kind == "dow_pattern"
+    assert "wed" in insight.body.lower() or "wednesday" in insight.body.lower()
+
+
+def test_insight_sleep_stage_quality_triggers() -> None:
+    f = _happy_frames()
+    # Force >20% deep sleep
+    f.cycles.loc[:, "Light sleep duration (min)"] = 200.0
+    f.cycles.loc[:, "REM duration (min)"] = 100.0
+    f.cycles.loc[:, "Deep (SWS) duration (min)"] = 200.0
+    from app.analysis.insights import insight_sleep_stage_quality
+    insight = insight_sleep_stage_quality(f)
+    assert insight is not None
+    assert insight.kind == "sleep_stage_quality"
+
+
+def test_insight_workout_mix_triggers() -> None:
+    f = _happy_frames()
+    # All workouts are Walking already (the fixture defaults), so the rule should fire
+    from app.analysis.insights import insight_workout_mix
+    insight = insight_workout_mix(f)
+    assert insight is not None
+    assert insight.kind == "workout_mix"

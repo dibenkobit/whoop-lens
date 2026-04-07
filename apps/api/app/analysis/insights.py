@@ -6,6 +6,8 @@ Returning None means the rule didn't trigger and is dropped from the response.
 import math
 from collections.abc import Callable
 
+import pandas as pd  # pyright: ignore[reportMissingTypeStubs]
+
 from app.analysis.time_helpers import bedtime_hour
 from app.models.insight import Insight, InsightHighlight
 from app.parsing.frames import ParsedFrames
@@ -181,20 +183,126 @@ def insight_travel_impact(f: ParsedFrames) -> Insight | None:
     )
 
 
-def insight_dow_pattern(_f: ParsedFrames) -> Insight | None:
-    return None
+def insight_dow_pattern(f: ParsedFrames) -> Insight | None:
+    c = f.cycles
+    rec = c["Recovery score %"].dropna()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+    if rec.empty:  # pyright: ignore[reportUnknownMemberType]
+        return None
+    dow = c.loc[rec.index, "Cycle start time"].dt.day_name()  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType]
+    by_dow = rec.groupby(dow).mean()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportUnknownArgumentType]
+    if by_dow.empty:  # pyright: ignore[reportUnknownMemberType, reportAttributeAccessIssue]
+        return None
+    best_day = by_dow.idxmax()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportAttributeAccessIssue]
+    worst_day = by_dow.idxmin()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportAttributeAccessIssue]
+    spread = float(by_dow.max() - by_dow.min())  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportArgumentType, reportUnknownArgumentType, reportAttributeAccessIssue, reportCallIssue]
+    if spread < 5:
+        return None
+    return Insight(
+        kind="dow_pattern",
+        severity="low",
+        title=f"{worst_day} is your weakest day",
+        body=(
+            f"Your average recovery on {worst_day}s is {round(float(by_dow[worst_day]))}%, "  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportArgumentType, reportUnknownArgumentType, reportCallIssue, reportIndexIssue]
+            f"versus {round(float(by_dow[best_day]))}% on {best_day}s. "  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportArgumentType, reportUnknownArgumentType, reportCallIssue, reportIndexIssue]
+            f"Worth noticing what's different about that part of your week."
+        ),
+        highlight=InsightHighlight(value=f"-{round(spread)}", unit="pp"),
+    )
 
 
-def insight_sleep_stage_quality(_f: ParsedFrames) -> Insight | None:
-    return None
+def insight_sleep_stage_quality(f: ParsedFrames) -> Insight | None:
+    c = f.cycles
+    light = float(c["Light sleep duration (min)"].dropna().mean() or 0.0)  # pyright: ignore[reportUnknownMemberType, reportArgumentType, reportUnknownArgumentType]
+    rem = float(c["REM duration (min)"].dropna().mean() or 0.0)  # pyright: ignore[reportUnknownMemberType, reportArgumentType, reportUnknownArgumentType]
+    deep = float(c["Deep (SWS) duration (min)"].dropna().mean() or 0.0)  # pyright: ignore[reportUnknownMemberType, reportArgumentType, reportUnknownArgumentType]
+    total = light + rem + deep
+    if total == 0:
+        return None
+    deep_pct = deep / total * 100
+    rem_pct = rem / total * 100
+    if max(deep_pct, rem_pct) < 20:
+        return None
+    return Insight(
+        kind="sleep_stage_quality",
+        severity="low",
+        title="Your sleep architecture is excellent",
+        body=(
+            f"Average deep sleep is {round(deep_pct)}% and REM is {round(rem_pct)}% of "
+            f"total sleep — both above typical adult baselines (around 13–18% for deep). "
+            f"Your body is doing the recovery work it should."
+        ),
+        highlight=InsightHighlight(value=f"{round(deep_pct)}%", unit="deep"),
+    )
 
 
-def insight_long_term_trend(_f: ParsedFrames) -> Insight | None:
-    return None
+def insight_long_term_trend(f: ParsedFrames) -> Insight | None:
+    c = f.cycles.sort_values("Cycle start time").reset_index(drop=True)  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+    if len(c) < 120:  # pyright: ignore[reportUnknownArgumentType]
+        return None
+    first = c.head(60)  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+    last = c.tail(60)  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+
+    def _mean(df: pd.DataFrame, col: str) -> float:
+        return float(df[col].dropna().mean() or 0.0)  # pyright: ignore[reportUnknownMemberType, reportArgumentType, reportUnknownArgumentType]
+
+    rhr_delta = _mean(first, "Resting heart rate (bpm)") - _mean(
+        last, "Resting heart rate (bpm)"
+    )
+    sleep_delta = (
+        _mean(last, "Asleep duration (min)") - _mean(first, "Asleep duration (min)")
+    ) / 60
+    rec_delta = _mean(last, "Recovery score %") - _mean(first, "Recovery score %")
+    improvements = sum(
+        1
+        for v in (rhr_delta, sleep_delta, rec_delta)
+        if v > 0
+    )
+    if improvements < 2:
+        return None
+    return Insight(
+        kind="long_term_trend",
+        severity="low",
+        title="You're trending in the right direction",
+        body=(
+            f"Comparing your first 60 days to your last 60: resting HR is "
+            f"{abs(round(rhr_delta, 1))} bpm {'lower' if rhr_delta > 0 else 'higher'}, "
+            f"average sleep is {abs(round(sleep_delta, 1))}h "
+            f"{'longer' if sleep_delta > 0 else 'shorter'}, and recovery is "
+            f"{abs(round(rec_delta))} pp {'higher' if rec_delta > 0 else 'lower'}."
+        ),
+        highlight=InsightHighlight(value=f"+{round(rec_delta)}", unit="pp"),
+    )
 
 
-def insight_workout_mix(_f: ParsedFrames) -> Insight | None:
-    return None
+def insight_workout_mix(f: ParsedFrames) -> Insight | None:
+    if f.workouts.empty:
+        return None
+    total = float(f.workouts["Activity Strain"].dropna().sum() or 0.0)  # pyright: ignore[reportUnknownMemberType, reportArgumentType, reportUnknownArgumentType]
+    if total == 0:
+        return None
+    _walking_raw = (  # pyright: ignore[reportUnknownVariableType]
+        f.workouts.loc[
+            f.workouts["Activity name"].isin(["Walking", "Activity"]), "Activity Strain"  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+        ]
+        .dropna()  # pyright: ignore[reportUnknownMemberType]
+        .sum()  # pyright: ignore[reportUnknownMemberType]
+        or 0.0
+    )
+    walking_strain = float(_walking_raw)  # pyright: ignore[reportArgumentType, reportUnknownArgumentType]
+    pct = walking_strain / total * 100
+    if pct < 50:
+        return None
+    return Insight(
+        kind="workout_mix",
+        severity="low",
+        title="Most of your strain is steady-state",
+        body=(
+            f"Walking and general activity make up {round(pct)}% of your total strain. "
+            f"Adding even one or two strength or interval sessions per week would diversify "
+            f"the load."
+        ),
+        highlight=InsightHighlight(value=f"{round(pct)}%"),
+    )
 
 
 INSIGHT_RULES: list[InsightFn] = [
