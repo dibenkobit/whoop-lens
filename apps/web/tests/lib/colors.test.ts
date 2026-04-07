@@ -19,11 +19,25 @@ describe("colors", () => {
       path.resolve(__dirname, "../../src/app/globals.css"),
       "utf-8",
     );
-    expect(css).toContain("#16ec06"); // rec-green
-    expect(css).toContain("#ffde00"); // rec-yellow
-    expect(css).toContain("#ff0026"); // rec-red
-    expect(css).toContain("#0093e7"); // strain
-    expect(css).toContain("#7ba1bb"); // sleep
-    expect(css).toContain("#00f19f"); // teal
+
+    // Pin each JS constant to its CSS counterpart. Both sides must match.
+    const pairs: Array<[string, string]> = [
+      [COLORS.recGreen, "#16ec06"],
+      [COLORS.recYellow, "#ffde00"],
+      [COLORS.recRed, "#ff0026"],
+      [COLORS.recBlue, "#67aee6"],
+      [COLORS.strain, "#0093e7"],
+      [COLORS.sleep, "#7ba1bb"],
+      [COLORS.teal, "#00f19f"],
+      [COLORS.bgTop, "#283339"],
+      [COLORS.bgBottom, "#101518"],
+      [COLORS.card, "#1a2227"],
+      [COLORS.cardAlt, "#1f2a30"],
+    ];
+
+    for (const [jsValue, cssValue] of pairs) {
+      expect(jsValue.toLowerCase()).toBe(cssValue);
+      expect(css).toContain(cssValue);
+    }
   });
 });

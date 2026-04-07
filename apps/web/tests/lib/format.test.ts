@@ -58,4 +58,9 @@ describe("format", () => {
     expect(clockFrom24h(25.0)).toBe("01:00");
     expect(clockFrom24h(28.75)).toBe("04:45");
   });
+
+  it("formatHours wraps when minutes round up to 60", () => {
+    expect(formatHours(119.6)).toBe("2h 0m");
+    expect(formatHours(59.6)).toBe("1h 0m");
+  });
 });

@@ -8,8 +8,9 @@ export function formatPct(value: number, digits = 0): string {
 }
 
 export function formatHours(minutes: number): string {
-  const h = Math.floor(minutes / 60);
-  const m = Math.round(minutes % 60);
+  const total = Math.round(minutes);
+  const h = Math.floor(total / 60);
+  const m = total % 60;
   return `${h}h ${m}m`;
 }
 
