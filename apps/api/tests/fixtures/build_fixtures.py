@@ -161,7 +161,9 @@ def _build_zip(
 
 def build_corrupt_zip(target: Path) -> None:
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_bytes(b"this is not a zip file at all\x00\x01\x02")
+    # PK magic prefix so load_zip classifies it as corrupt (not "not a zip"),
+    # but the rest is garbage so zipfile.ZipFile raises BadZipFile.
+    target.write_bytes(b"PK\x03\x04" + b"\x00" * 256 + b"truncated")
 
 
 def build_wrong_format_zip(target: Path) -> None:
