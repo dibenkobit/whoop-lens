@@ -1,6 +1,6 @@
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field
 
 from app.models.insight import Insight
 
@@ -11,19 +11,28 @@ class Period(BaseModel):
     days: int
 
 
-class DialMetric(BaseModel):
+class SleepDial(BaseModel):
     value: float
-    unit: Literal["h", "%", ""]
-    # exactly one of these is set per dial; we keep both as Optional for typing
-    performance_pct: float | None = None  # sleep
-    green_pct: float | None = None  # recovery
-    label: Literal["light", "moderate", "high", "all_out"] | None = None  # strain
+    unit: Literal["h"] = "h"
+    performance_pct: float
+
+
+class RecoveryDial(BaseModel):
+    value: float
+    unit: Literal["%"] = "%"
+    green_pct: float
+
+
+class StrainDial(BaseModel):
+    value: float
+    unit: Literal[""] = ""
+    label: Literal["light", "moderate", "high", "all_out"]
 
 
 class Dials(BaseModel):
-    sleep: DialMetric
-    recovery: DialMetric
-    strain: DialMetric
+    sleep: SleepDial
+    recovery: RecoveryDial
+    strain: StrainDial
 
 
 class Metrics(BaseModel):
@@ -72,11 +81,15 @@ class RecoverySection(BaseModel):
 
 
 class HypnogramSegment(BaseModel):
-    stage: Literal["awake", "light", "rem", "deep"]
-    from_: str = Field(..., alias="from")
-    to: str
+    model_config = ConfigDict(populate_by_name=True)
 
-    model_config = {"populate_by_name": True}
+    stage: Literal["awake", "light", "rem", "deep"]
+    from_: str = Field(
+        ...,
+        validation_alias=AliasChoices("from", "from_"),
+        serialization_alias="from",
+    )
+    to: str
 
 
 class HypnogramNight(BaseModel):

@@ -2,12 +2,14 @@ from datetime import datetime, timezone
 
 from app.models.insight import Insight
 from app.models.report import (
-    DialMetric,
     Dials,
     Metrics,
     Period,
+    RecoveryDial,
     RecoverySection,
+    SleepDial,
     SleepSection,
+    StrainDial,
     StrainSection,
     TrendsSection,
     TrendComparison,
@@ -21,9 +23,9 @@ def _minimal_report() -> WhoopReport:
         schema_version=1,
         period=Period(start="2025-01-01", end="2025-01-31", days=31),
         dials=Dials(
-            sleep=DialMetric(value=8.0, unit="h", performance_pct=85.0),
-            recovery=DialMetric(value=70.0, unit="%", green_pct=60.0),
-            strain=DialMetric(value=10.0, unit="", label="moderate"),
+            sleep=SleepDial(value=8.0, performance_pct=85.0),
+            recovery=RecoveryDial(value=70.0, green_pct=60.0),
+            strain=StrainDial(value=10.0, label="moderate"),
         ),
         metrics=Metrics(
             hrv_ms=120.0,
@@ -101,3 +103,70 @@ def test_share_request_response() -> None:
     )
     data = resp.model_dump(mode="json")
     assert data["url"] == "/r/abc12345"
+
+
+def test_hypnogram_segment_serializes_as_from() -> None:
+    from app.models.report import HypnogramSegment
+
+    seg = HypnogramSegment(stage="light", from_="2025-01-01T22:00:00Z", to="2025-01-01T23:00:00Z")
+    data = seg.model_dump(mode="json", by_alias=True)
+    assert "from" in data
+    assert "from_" not in data
+    assert data["from"] == "2025-01-01T22:00:00Z"
+
+    # Round-trip from the wire format
+    again = HypnogramSegment.model_validate(data)
+    assert again.from_ == "2025-01-01T22:00:00Z"
+
+
+def test_sleep_dial_wire_shape_no_nulls() -> None:
+    from app.models.report import SleepDial
+
+    data = SleepDial(value=8.0, performance_pct=85.0).model_dump(mode="json")
+    assert set(data.keys()) == {"value", "unit", "performance_pct"}
+    assert data["unit"] == "h"
+
+
+def test_recovery_dial_wire_shape_no_nulls() -> None:
+    from app.models.report import RecoveryDial
+
+    data = RecoveryDial(value=70.0, green_pct=60.0).model_dump(mode="json")
+    assert set(data.keys()) == {"value", "unit", "green_pct"}
+    assert data["unit"] == "%"
+
+
+def test_strain_dial_wire_shape_no_nulls() -> None:
+    from app.models.report import StrainDial
+
+    data = StrainDial(value=10.0, label="moderate").model_dump(mode="json")
+    assert set(data.keys()) == {"value", "unit", "label"}
+    assert data["unit"] == ""
+
+
+def test_insight_omits_null_unit() -> None:
+    from app.models.insight import Insight, InsightHighlight
+
+    insight = Insight(
+        kind="undersleep",
+        severity="medium",
+        title="t",
+        body="b",
+        highlight=InsightHighlight(value="+30"),
+    )
+    data = insight.model_dump(mode="json")
+    assert "unit" not in data["highlight"]
+    assert "evidence" not in data
+
+
+def test_insight_includes_unit_when_set() -> None:
+    from app.models.insight import Insight, InsightHighlight
+
+    insight = Insight(
+        kind="undersleep",
+        severity="medium",
+        title="t",
+        body="b",
+        highlight=InsightHighlight(value="+30", unit="pp"),
+    )
+    data = insight.model_dump(mode="json")
+    assert data["highlight"]["unit"] == "pp"
