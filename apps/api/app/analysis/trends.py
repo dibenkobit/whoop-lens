@@ -38,7 +38,10 @@ def compute_dials(f: ParsedFrames) -> Dials:
     sleep_h_mean = float(c["Asleep duration (min)"].dropna().mean() / 60.0) if not c.empty else 0.0  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportOperatorIssue, reportArgumentType, reportUnknownArgumentType]
     sleep_perf_mean = float(c["Sleep performance %"].dropna().mean()) if not c.empty else 0.0  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportArgumentType, reportUnknownArgumentType]
     rec_mean = float(c["Recovery score %"].dropna().mean()) if not c.empty else 0.0  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportArgumentType, reportUnknownArgumentType]
-    rec_green_pct = float((c["Recovery score %"].dropna() >= 67).mean() * 100) if not c.empty else 0.0  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportOperatorIssue, reportArgumentType, reportUnknownArgumentType]
+    rec_green_pct = (
+        float((c["Recovery score %"].dropna() >= 67).mean() * 100)  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportOperatorIssue, reportArgumentType, reportUnknownArgumentType]
+        if not c.empty else 0.0
+    )
     strain_mean = float(c["Day Strain"].dropna().mean()) if not c.empty else 0.0  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportArgumentType, reportUnknownArgumentType]
     return Dials(
         sleep=SleepDial(value=round(sleep_h_mean, 2), performance_pct=round(sleep_perf_mean, 1)),
@@ -65,7 +68,7 @@ def compute_recovery_section(f: ParsedFrames) -> RecoverySection:
         sub = c[dow_series == dow]  # pyright: ignore[reportUnknownVariableType, reportArgumentType]
         rec = sub["Recovery score %"].dropna()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportArgumentType, reportAttributeAccessIssue]
         by_dow_records.append(
-            DowEntry(dow=dow, mean=round(float(rec.mean() if len(rec) else 0.0), 1), n=int(len(rec)))  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportUnknownArgumentType, reportArgumentType]
+            DowEntry(dow=dow, mean=round(float(rec.mean() if len(rec) else 0.0), 1), n=len(rec))  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportUnknownArgumentType, reportArgumentType]
         )
 
     rec = c["Recovery score %"].dropna()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]

@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import pytest
 from sqlalchemy import select
@@ -10,7 +10,7 @@ from app.db.models import SharedReport
 @pytest.mark.asyncio
 async def test_insert_and_select_shared_report(db_session: AsyncSession) -> None:
     report = {"hello": "world"}
-    expires = datetime.now(timezone.utc) + timedelta(days=30)
+    expires = datetime.now(UTC) + timedelta(days=30)
     db_session.add(SharedReport(id="abc12345", report=report, expires_at=expires))
     await db_session.flush()
 

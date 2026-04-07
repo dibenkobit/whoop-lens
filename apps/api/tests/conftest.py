@@ -17,8 +17,8 @@ os.environ.setdefault(
     "postgresql+asyncpg://postgres:postgres@localhost:5432/whoop_lens",
 )
 
-from app.db.base import Base  # noqa: E402  (must come after env default)
-from tests.fixtures.build_fixtures import build_all_fixtures  # noqa: E402
+from app.db.base import Base
+from tests.fixtures.build_fixtures import build_all_fixtures
 
 _DATABASE_URL = os.environ["DATABASE_URL"]
 

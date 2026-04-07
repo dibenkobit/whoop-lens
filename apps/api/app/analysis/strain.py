@@ -52,7 +52,7 @@ def compute_workouts_section(f: ParsedFrames) -> WorkoutsSection | None:
         by_activity_records.append(
             ActivityAgg(
                 name=str(activity),
-                count=int(len(sub)),
+                count=len(sub),
                 total_strain=round(total_strain, 1),
                 total_min=round(float(sub["Duration (min)"].dropna().sum() or 0.0), 1),  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportArgumentType, reportUnknownArgumentType]
                 pct_of_total_strain=round(
@@ -86,7 +86,7 @@ def compute_workouts_section(f: ParsedFrames) -> WorkoutsSection | None:
         )
 
     return WorkoutsSection(
-        total=int(len(w)),
+        total=len(w),
         by_activity=by_activity_records,
         top_strain_days=top_records,
     )

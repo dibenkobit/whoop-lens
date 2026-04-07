@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import pytest
 from sqlalchemy import select
@@ -10,7 +10,7 @@ from app.db.models import SharedReport
 
 @pytest.mark.asyncio
 async def test_cleanup_removes_only_expired(db_session: AsyncSession) -> None:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     db_session.add(
         SharedReport(id="alive001", report={"x": 1}, expires_at=now + timedelta(days=1))
     )

@@ -1,6 +1,6 @@
 import asyncio
 from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,10 +23,8 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         yield
     finally:
         cleanup_task.cancel()
-        try:
+        with suppress(asyncio.CancelledError):
             await cleanup_task
-        except asyncio.CancelledError:
-            pass
         log.info("lifespan_stopped")
 
 

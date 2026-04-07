@@ -27,8 +27,16 @@ def insight_undersleep(f: ParsedFrames) -> Insight | None:
     long_mask = (sleep_h >= 8).reindex(f.cycles.index, fill_value=False)  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
     rec_short_raw = rec[short_mask].dropna().mean()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportAttributeAccessIssue]
     rec_long_raw = rec[long_mask].dropna().mean()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportAttributeAccessIssue]
-    rec_short_f: float = float(rec_short_raw) if rec_short_raw is not None and not math.isnan(float(rec_short_raw)) else 0.0  # pyright: ignore[reportArgumentType, reportUnknownArgumentType]
-    rec_long_f: float = float(rec_long_raw) if rec_long_raw is not None and not math.isnan(float(rec_long_raw)) else 0.0  # pyright: ignore[reportArgumentType, reportUnknownArgumentType]
+    rec_short_f: float = (
+        float(rec_short_raw)  # pyright: ignore[reportArgumentType, reportUnknownArgumentType]
+        if rec_short_raw is not None and not math.isnan(float(rec_short_raw))  # pyright: ignore[reportArgumentType, reportUnknownArgumentType]
+        else 0.0
+    )
+    rec_long_f: float = (
+        float(rec_long_raw)  # pyright: ignore[reportArgumentType, reportUnknownArgumentType]
+        if rec_long_raw is not None and not math.isnan(float(rec_long_raw))  # pyright: ignore[reportArgumentType, reportUnknownArgumentType]
+        else 0.0
+    )
     delta = round(rec_long_f - rec_short_f)
     severity = "high" if short_pct > 0.15 else "medium"
     return Insight(
@@ -60,8 +68,16 @@ def insight_bedtime_consistency(f: ParsedFrames) -> Insight | None:
     high_var_mask = (rolling_std > 2).reindex(rec.index, fill_value=False)  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
     rec_low_raw = rec[low_var_mask].dropna().mean()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportAttributeAccessIssue]
     rec_high_raw = rec[high_var_mask].dropna().mean()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportAttributeAccessIssue]
-    rec_low_f: float = float(rec_low_raw) if rec_low_raw is not None and not math.isnan(float(rec_low_raw)) else 0.0  # pyright: ignore[reportArgumentType, reportUnknownArgumentType]
-    rec_high_f: float = float(rec_high_raw) if rec_high_raw is not None and not math.isnan(float(rec_high_raw)) else 0.0  # pyright: ignore[reportArgumentType, reportUnknownArgumentType]
+    rec_low_f: float = (
+        float(rec_low_raw)  # pyright: ignore[reportArgumentType, reportUnknownArgumentType]
+        if rec_low_raw is not None and not math.isnan(float(rec_low_raw))  # pyright: ignore[reportArgumentType, reportUnknownArgumentType]
+        else 0.0
+    )
+    rec_high_f: float = (
+        float(rec_high_raw)  # pyright: ignore[reportArgumentType, reportUnknownArgumentType]
+        if rec_high_raw is not None and not math.isnan(float(rec_high_raw))  # pyright: ignore[reportArgumentType, reportUnknownArgumentType]
+        else 0.0
+    )
     delta = round(rec_low_f - rec_high_f)
     return Insight(
         kind="bedtime_consistency",
@@ -88,9 +104,9 @@ def insight_late_chronotype(f: ParsedFrames) -> Insight | None:
         severity="low",
         title="You're a strong night owl",
         body=(
-            f"Your average bedtime is past 01:00. Even with the same total sleep, "
-            f"earlier bedtimes (00:00–01:00) tend to score 5-10 percentage points "
-            f"higher in recovery."
+            "Your average bedtime is past 01:00. Even with the same total sleep, "
+            "earlier bedtimes (00:00-01:00) tend to score 5-10 percentage points "
+            "higher in recovery."
         ),
         highlight=InsightHighlight(value="01:00+"),
     )
@@ -122,8 +138,8 @@ def insight_overtraining(f: ParsedFrames) -> Insight | None:
         title="Big strain days drag the next day",
         body=(
             f"After days with strain over 15, your recovery the next morning averages "
-            f"{round(after)}% — about {round(delta)} points below your usual baseline of {round(baseline)}%. "
-            f"Consider a recovery day after strenuous efforts."
+            f"{round(after)}% — about {round(delta)} points below your usual baseline of "
+            f"{round(baseline)}%. Consider a recovery day after strenuous efforts."
         ),
         highlight=InsightHighlight(value=f"-{round(delta)}", unit="pp"),
     )
@@ -228,7 +244,7 @@ def insight_sleep_stage_quality(f: ParsedFrames) -> Insight | None:
         title="Your sleep architecture is excellent",
         body=(
             f"Average deep sleep is {round(deep_pct)}% and REM is {round(rem_pct)}% of "
-            f"total sleep — both above typical adult baselines (around 13–18% for deep). "
+            f"total sleep — both above typical adult baselines (around 13-18% for deep). "
             f"Your body is doing the recovery work it should."
         ),
         highlight=InsightHighlight(value=f"{round(deep_pct)}%", unit="deep"),

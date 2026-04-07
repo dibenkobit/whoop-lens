@@ -153,7 +153,9 @@ def _build_zip(
 
     target.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(target, "w", zipfile.ZIP_DEFLATED) as zf:
-        zf.writestr(zipfile.ZipInfo("physiological_cycles.csv", date_time=_FIXED_DATE), cycles_bytes)
+        zf.writestr(
+            zipfile.ZipInfo("physiological_cycles.csv", date_time=_FIXED_DATE), cycles_bytes
+        )
         zf.writestr(zipfile.ZipInfo("sleeps.csv", date_time=_FIXED_DATE), sleeps_bytes)
         zf.writestr(zipfile.ZipInfo("workouts.csv", date_time=_FIXED_DATE), workouts_bytes)
         zf.writestr(zipfile.ZipInfo("journal_entries.csv", date_time=_FIXED_DATE), journal_bytes)

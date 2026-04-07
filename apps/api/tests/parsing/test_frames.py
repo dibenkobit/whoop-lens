@@ -44,10 +44,11 @@ def test_parse_wrong_format_raises() -> None:
 
 def test_parse_empty_cycles_raises(tmp_path: object) -> None:
     import zipfile
+
     from app.parsing.csv_schema import (
         CYCLES_REQUIRED_COLUMNS,
-        SLEEPS_REQUIRED_COLUMNS,
         JOURNAL_REQUIRED_COLUMNS,
+        SLEEPS_REQUIRED_COLUMNS,
         WORKOUTS_REQUIRED_COLUMNS,
     )
     p = tmp_path / "empty.zip"  # type: ignore[operator]

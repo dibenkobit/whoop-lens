@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from app.models.insight import Insight
 from app.models.report import (
@@ -11,8 +11,8 @@ from app.models.report import (
     SleepSection,
     StrainDial,
     StrainSection,
-    TrendsSection,
     TrendComparison,
+    TrendsSection,
     WhoopReport,
 )
 from app.models.share import ShareCreateRequest, ShareCreateResponse
@@ -46,7 +46,9 @@ def _minimal_report() -> WhoopReport:
             avg_bedtime="02:22",
             avg_wake="11:36",
             bedtime_std_h=1.5,
-            avg_durations={"light_min": 270.0, "rem_min": 110.0, "deep_min": 100.0, "awake_min": 38.0},
+            avg_durations={
+                "light_min": 270.0, "rem_min": 110.0, "deep_min": 100.0, "awake_min": 38.0
+            },
             stage_pct={"light": 56.0, "rem": 22.0, "deep": 22.0},
             hypnogram_sample=None,
             consistency_strip=[],
@@ -99,7 +101,7 @@ def test_share_request_response() -> None:
     resp = ShareCreateResponse(
         id="abc12345",
         url="/r/abc12345",
-        expires_at=datetime(2026, 5, 7, tzinfo=timezone.utc),
+        expires_at=datetime(2026, 5, 7, tzinfo=UTC),
     )
     data = resp.model_dump(mode="json")
     assert data["url"] == "/r/abc12345"

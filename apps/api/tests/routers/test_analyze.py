@@ -1,5 +1,3 @@
-import io
-
 import pytest
 from httpx import ASGITransport, AsyncClient
 

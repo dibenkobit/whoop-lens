@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from nanoid import generate as nanoid_generate
@@ -23,7 +23,7 @@ async def create_share(
     session: AsyncSession = Depends(get_session),
 ) -> ShareCreateResponse:
     short_id = nanoid_generate(size=8)
-    expires_at = datetime.now(timezone.utc) + timedelta(days=settings.share_ttl_days)
+    expires_at = datetime.now(UTC) + timedelta(days=settings.share_ttl_days)
     row = SharedReport(
         id=short_id,
         report=req.report.model_dump(mode="json", by_alias=True),
@@ -46,6 +46,6 @@ async def get_shared_report(
     ).scalar_one_or_none()
     if row is None:
         raise HTTPException(status_code=404, detail="not found")
-    if row.expires_at < datetime.now(timezone.utc):
+    if row.expires_at < datetime.now(UTC):
         raise HTTPException(status_code=404, detail="expired")
     return WhoopReport.model_validate(row.report)

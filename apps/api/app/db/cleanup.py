@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import cast
 
 from sqlalchemy import delete
@@ -22,7 +22,7 @@ async def delete_expired_now(session: AsyncSession | None = None) -> int:
     and committed before returning.
     """
     stmt = delete(SharedReport).where(
-        SharedReport.expires_at < datetime.now(timezone.utc)
+        SharedReport.expires_at < datetime.now(UTC)
     )
     if session is not None:
         result = cast(CursorResult[tuple[()]], await session.execute(stmt))
@@ -39,6 +39,6 @@ async def periodic_cleanup() -> None:
         try:
             n = await delete_expired_now()
             log.info("cleanup_ran", deleted=n)
-        except Exception:  # noqa: BLE001
+        except Exception:
             log.exception("cleanup_failed")
         await asyncio.sleep(CLEANUP_INTERVAL_SECONDS)

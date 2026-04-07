@@ -3,12 +3,12 @@
 Column lists are taken from a real Whoop export (April 2026 format). If Whoop
 changes the export, only this file should need to update.
 """
-from enum import Enum
+from enum import StrEnum
 
 from app.parsing.errors import UnexpectedSchemaError
 
 
-class CsvFile(str, Enum):
+class CsvFile(StrEnum):
     CYCLES = "physiological_cycles.csv"
     SLEEPS = "sleeps.csv"
     WORKOUTS = "workouts.csv"
