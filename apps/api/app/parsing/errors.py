@@ -1,7 +1,10 @@
+from typing import ClassVar
+
+
 class ParseError(Exception):
     """Base class for all parsing errors that should become 400 responses."""
 
-    code: str = "parse_error"
+    code: ClassVar[str] = "parse_error"
 
 
 class NotAZipError(ParseError):
