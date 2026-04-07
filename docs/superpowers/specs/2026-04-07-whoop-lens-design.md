@@ -648,7 +648,7 @@ Both jobs must pass for merge. Branch protection on `main`. PR previews via Verc
 1. Push monorepo to GitHub (`whoop-lens` repo)
 2. **Vercel**: connect repo → Root Directory = `apps/web` → env var `NEXT_PUBLIC_API_URL=https://api.whooplens.app` → deploy
 3. **Railway**: new project → Deploy from GitHub → Root Directory = `apps/api` → add Postgres add-on → env vars `CORS_ORIGIN=https://whoop-lens.vercel.app`, `SHARE_TTL_DAYS=30`, `MAX_UPLOAD_MB=50`
-4. (Optional) custom domain: `whooplens.app` → Vercel, `api.whooplens.app` → Railway; update `CORS_ORIGIN`
+4. Custom domain: `whooplens.app` → Vercel, `api.whooplens.app` → Railway; update `CORS_ORIGIN` accordingly
 
 ### `apps/api/railway.toml`
 
@@ -695,7 +695,7 @@ One-click in Railway/Vercel deployments tabs. No manual procedure.
 
 - Vercel hobby: free
 - Railway: ~$5–10/month for api + Postgres
-- Domain: $10–15/year (optional)
+- Domain: ~$10–15/year
 - **Total: under $20/month** for the public hosted instance
 
 ### Self-hosting (README)
@@ -716,7 +716,7 @@ One-click in Railway/Vercel deployments tabs. No manual procedure.
 - Display: **Whoop Lens**
 - Slug: `whoop-lens`
 - Wordmark in UI: `WHOOP·LENS` (uppercase, middot)
-- Domain: `whooplens.app` is the working name; actual purchase deferred to deploy time
+- Domain: `whooplens.app` (already configured)
 
 ### License
 
@@ -892,13 +892,13 @@ Each rule has its own test file with three cases: triggers, does-not-trigger, ed
 
 ---
 
-## 12. Open questions / things to confirm during implementation
+## 12. Implementation notes
 
-1. **Domain availability** — `whooplens.app` or alternatives. Confirm at deploy time, not now.
-2. **Whoop empty-file behavior** — research suggests `workouts.csv` and `journal_entries.csv` are present-with-headers when empty rather than absent, but the parser handles both cases gracefully (file missing OR file with zero data rows is treated identically).
-3. **Custom domain setup** — needed if we want `api.whooplens.app` and `whooplens.app` instead of the default Vercel/Railway URLs. Optional for v1.
-4. **Snapshot fixtures anonymization** — need a tiny `scripts/anonymize_export.py` that takes a real Whoop zip, drops timezones to a fixed offset, jitters timestamps by ±1 day, and outputs a checked-in fixture. Implementation detail for v1.
-5. **Whoop Brand Guidelines updates** — the brand PDF on `developer.whoop.com` might be updated. Add a quarterly check in `CONTRIBUTING.md` to re-pull and confirm hex codes.
+These are not open questions — just things to be aware of during the build:
+
+1. **Whoop empty-file behavior** — research suggests `workouts.csv` and `journal_entries.csv` are present-with-headers when empty rather than absent, but the parser handles both cases gracefully (file missing OR file with zero data rows is treated identically).
+2. **Snapshot fixtures anonymization** — need a tiny `scripts/anonymize_export.py` that takes a real Whoop zip, drops timezones to a fixed offset, jitters timestamps by ±1 day, and outputs a checked-in fixture. Implementation detail for v1.
+3. **Whoop Brand Guidelines updates** — the brand PDF on `developer.whoop.com` might be updated. Add a quarterly check in `CONTRIBUTING.md` to re-pull and confirm hex codes.
 
 ---
 
