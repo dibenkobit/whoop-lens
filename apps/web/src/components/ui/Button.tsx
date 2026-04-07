@@ -13,7 +13,8 @@ const variantClass: Record<Variant, string> = {
     "bg-teal text-[#001a10] hover:brightness-95 disabled:opacity-50 disabled:cursor-not-allowed",
   secondary:
     "bg-card-alt text-text-primary hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed",
-  ghost: "text-text-2 hover:text-text-primary hover:bg-white/5",
+  ghost:
+    "text-text-2 hover:text-text-primary hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed",
 };
 
 export function Button({

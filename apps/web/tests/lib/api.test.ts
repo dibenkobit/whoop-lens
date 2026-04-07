@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiError, analyzeZip, createShare, getSharedReport } from "@/lib/api";
 import type { WhoopReport } from "@/lib/types";

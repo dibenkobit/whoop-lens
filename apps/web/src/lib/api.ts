@@ -1,8 +1,4 @@
-import type {
-  ApiErrorBody,
-  ShareCreateResponse,
-  WhoopReport,
-} from "./types";
+import type { ApiErrorBody, ShareCreateResponse, WhoopReport } from "./types";
 import { apiBase } from "./url";
 
 export class ApiError extends Error {
