@@ -2,14 +2,15 @@
 
 import { clsx } from "clsx";
 import { useCallback } from "react";
-import { useDropzone } from "react-dropzone";
+import { type FileRejection, useDropzone } from "react-dropzone";
 
 type Props = {
   onFile: (file: File) => void;
+  onReject?: (message: string) => void;
   disabled?: boolean;
 };
 
-export function Dropzone({ onFile, disabled }: Props) {
+export function Dropzone({ onFile, onReject, disabled }: Props) {
   const onDrop = useCallback(
     (files: File[]) => {
       const file = files[0];
@@ -17,8 +18,23 @@ export function Dropzone({ onFile, disabled }: Props) {
     },
     [onFile],
   );
+  const onDropRejected = useCallback(
+    (rejections: FileRejection[]) => {
+      if (!onReject) return;
+      const code = rejections[0]?.errors[0]?.code;
+      if (code === "file-invalid-type") {
+        onReject("Please drop a .zip file from your Whoop export.");
+      } else if (code === "too-many-files") {
+        onReject("Please drop one file at a time.");
+      } else {
+        onReject("Couldn't accept that file. Please drop a single .zip.");
+      }
+    },
+    [onReject],
+  );
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
+    onDropRejected,
     accept: { "application/zip": [".zip"] },
     maxFiles: 1,
     multiple: false,

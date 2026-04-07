@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, type ReactNode, useContext, useState } from "react";
+import {
+  createContext,
+  type ReactNode,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 
 import type { WhoopReport } from "@/lib/types";
 
@@ -13,11 +19,8 @@ const ReportCtx = createContext<Ctx | null>(null);
 
 export function ReportProvider({ children }: { children: ReactNode }) {
   const [report, setReport] = useState<WhoopReport | null>(null);
-  return (
-    <ReportCtx.Provider value={{ report, setReport }}>
-      {children}
-    </ReportCtx.Provider>
-  );
+  const value = useMemo(() => ({ report, setReport }), [report]);
+  return <ReportCtx.Provider value={value}>{children}</ReportCtx.Provider>;
 }
 
 export function useReport(): Ctx {

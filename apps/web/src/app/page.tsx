@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Dropzone } from "@/components/upload/Dropzone";
 import { UploadError } from "@/components/upload/UploadError";
@@ -17,13 +17,37 @@ export default function Page() {
   const { setReport } = useReport();
   const [stage, setStage] = useState<Stage>("idle");
   const [error, setError] = useState<FriendlyError | null>(null);
+  const timerIds = useRef<number[]>([]);
+
+  useEffect(() => {
+    return () => {
+      for (const id of timerIds.current) {
+        window.clearTimeout(id);
+      }
+      timerIds.current = [];
+    };
+  }, []);
 
   async function handleFile(file: File) {
+    // Clear any timers from a previous attempt
+    for (const id of timerIds.current) {
+      window.clearTimeout(id);
+    }
+    timerIds.current = [];
+
     setError(null);
     setStage("uploading");
     // staged UX — small delay between visual states so the user can read the progress
-    setTimeout(() => setStage((s) => (s === "uploading" ? "parsing" : s)), 400);
-    setTimeout(() => setStage((s) => (s === "parsing" ? "analyzing" : s)), 900);
+    timerIds.current.push(
+      window.setTimeout(
+        () => setStage((s) => (s === "uploading" ? "parsing" : s)),
+        400,
+      ),
+      window.setTimeout(
+        () => setStage((s) => (s === "parsing" ? "analyzing" : s)),
+        900,
+      ),
+    );
     try {
       const report = await analyzeZip(file);
       setReport(report);
@@ -74,7 +98,17 @@ export default function Page() {
           }
         />
       ) : (
-        <Dropzone onFile={handleFile} disabled={busy} />
+        <Dropzone
+          onFile={handleFile}
+          disabled={busy}
+          onReject={(message) =>
+            setError({
+              title: "Can't read that file",
+              description: message,
+              canRetry: false,
+            })
+          }
+        />
       )}
       {error ? (
         <UploadError
