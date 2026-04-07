@@ -36,9 +36,10 @@ async def delete_expired_now(session: AsyncSession | None = None) -> int:
 
 async def periodic_cleanup() -> None:
     while True:
+        await asyncio.sleep(CLEANUP_INTERVAL_SECONDS)
         try:
             n = await delete_expired_now()
             log.info("cleanup_ran", deleted=n)
         except Exception:
             log.exception("cleanup_failed")
-        await asyncio.sleep(CLEANUP_INTERVAL_SECONDS)
+            await asyncio.sleep(60)  # short retry window after failure
