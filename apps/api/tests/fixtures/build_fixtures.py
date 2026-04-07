@@ -1,6 +1,6 @@
 """Generate deterministic fixture zips for the parser and pipeline tests.
 
-Uses a seeded numpy RNG so the snapshot tests are stable across machines.
+Uses a seeded random.Random(42) so the snapshot tests are stable across machines.
 """
 import csv
 import io
@@ -20,6 +20,7 @@ HAPPY_DAYS = 60
 MINIMAL_DAYS = 14
 SEED = 42
 START_DATE = datetime(2025, 1, 1, 23, 30, 0)
+_FIXED_DATE = (2025, 1, 1, 0, 0, 0)
 
 
 def fixtures_dir() -> Path:
@@ -152,10 +153,10 @@ def _build_zip(
 
     target.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(target, "w", zipfile.ZIP_DEFLATED) as zf:
-        zf.writestr("physiological_cycles.csv", cycles_bytes)
-        zf.writestr("sleeps.csv", sleeps_bytes)
-        zf.writestr("workouts.csv", workouts_bytes)
-        zf.writestr("journal_entries.csv", journal_bytes)
+        zf.writestr(zipfile.ZipInfo("physiological_cycles.csv", date_time=_FIXED_DATE), cycles_bytes)
+        zf.writestr(zipfile.ZipInfo("sleeps.csv", date_time=_FIXED_DATE), sleeps_bytes)
+        zf.writestr(zipfile.ZipInfo("workouts.csv", date_time=_FIXED_DATE), workouts_bytes)
+        zf.writestr(zipfile.ZipInfo("journal_entries.csv", date_time=_FIXED_DATE), journal_bytes)
 
 
 def build_corrupt_zip(target: Path) -> None:
@@ -181,10 +182,22 @@ def build_wrong_format_zip(target: Path) -> None:
         writer.writerow(renamed)
     target.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(target, "w", zipfile.ZIP_DEFLATED) as zf:
-        zf.writestr("physiological_cycles.csv", buf.getvalue())
-        zf.writestr("sleeps.csv", _empty_csv_bytes(SLEEPS_REQUIRED_COLUMNS))
-        zf.writestr("workouts.csv", _empty_csv_bytes(WORKOUTS_REQUIRED_COLUMNS))
-        zf.writestr("journal_entries.csv", _empty_csv_bytes(JOURNAL_REQUIRED_COLUMNS))
+        zf.writestr(
+            zipfile.ZipInfo("physiological_cycles.csv", date_time=_FIXED_DATE),
+            buf.getvalue().encode("utf-8"),
+        )
+        zf.writestr(
+            zipfile.ZipInfo("sleeps.csv", date_time=_FIXED_DATE),
+            _empty_csv_bytes(SLEEPS_REQUIRED_COLUMNS),
+        )
+        zf.writestr(
+            zipfile.ZipInfo("workouts.csv", date_time=_FIXED_DATE),
+            _empty_csv_bytes(WORKOUTS_REQUIRED_COLUMNS),
+        )
+        zf.writestr(
+            zipfile.ZipInfo("journal_entries.csv", date_time=_FIXED_DATE),
+            _empty_csv_bytes(JOURNAL_REQUIRED_COLUMNS),
+        )
 
 
 def build_all_fixtures() -> None:

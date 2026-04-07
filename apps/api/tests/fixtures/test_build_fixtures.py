@@ -5,14 +5,8 @@ import pytest
 
 from tests.fixtures.build_fixtures import (
     HAPPY_DAYS,
-    build_all_fixtures,
     fixtures_dir,
 )
-
-
-@pytest.fixture(scope="session", autouse=True)
-def _ensure_fixtures_built() -> None:
-    build_all_fixtures()
 
 
 def test_happy_zip_exists_and_has_4_files() -> None:
@@ -67,3 +61,4 @@ def test_wrong_format_zip_has_renamed_column() -> None:
     with zipfile.ZipFile(p) as zf, zf.open("physiological_cycles.csv") as f:
         header = f.readline().decode("utf-8").strip()
     assert "Recovery score %" not in header
+    assert "Recovery_score" in header
