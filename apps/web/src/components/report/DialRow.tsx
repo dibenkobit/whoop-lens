@@ -1,4 +1,4 @@
-import { COLORS } from "@/lib/colors";
+import { COLORS, recoveryColor } from "@/lib/colors";
 import type { Dials } from "@/lib/types";
 
 import { Dial } from "./Dial";
@@ -19,13 +19,7 @@ export function DialRow({ dials }: Props) {
       <Dial
         value={dials.recovery.value}
         max={100}
-        color={
-          dials.recovery.value >= 67
-            ? COLORS.recGreen
-            : dials.recovery.value >= 34
-              ? COLORS.recYellow
-              : COLORS.recRed
-        }
+        color={recoveryColor(dials.recovery.value)}
         display={`${dials.recovery.value.toFixed(0)}%`}
         label="Avg Recovery"
         sub={`${dials.recovery.green_pct.toFixed(0)}% green days`}
