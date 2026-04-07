@@ -9,6 +9,8 @@ dependencies = [
     "pydantic>=2.7",
     "pydantic-settings>=2.4",
     "structlog>=24.1",
+    "pandas>=2.2",
+    "numpy>=2.0",
 ]
 
 [dependency-groups]
