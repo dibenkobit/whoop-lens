@@ -10,6 +10,15 @@ os.environ.setdefault(
 )
 
 
+def pytest_addoption(parser: pytest.Parser) -> None:
+    parser.addoption(
+        "--snapshot-update",
+        action="store_true",
+        default=False,
+        help="Regenerate snapshot files instead of asserting against them.",
+    )
+
+
 @pytest.fixture(scope="session", autouse=True)
 def _build_fixtures() -> None:
     build_all_fixtures()
