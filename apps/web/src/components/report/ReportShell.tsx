@@ -5,6 +5,7 @@ import { type ReactNode, useState } from "react";
 import type { WhoopReport } from "@/lib/types";
 
 import { ReportHeader } from "./ReportHeader";
+import { SectionErrorBoundary } from "./SectionErrorBoundary";
 import { type SectionKey, Sidebar } from "./Sidebar";
 
 type Props = {
@@ -20,7 +21,9 @@ export function ReportShell({ report, canShare, renderSection }: Props) {
       <Sidebar active={section} onChange={setSection} report={report} />
       <div className="px-6 py-8 lg:px-10">
         <ReportHeader report={report} canShare={canShare} />
-        {renderSection(section)}
+        <SectionErrorBoundary sectionKey={section}>
+          {renderSection(section)}
+        </SectionErrorBoundary>
       </div>
     </div>
   );

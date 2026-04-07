@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Dialog } from "@/components/ui/Dialog";
@@ -18,20 +18,37 @@ export function ShareDialog({ open, onClose, report }: Props) {
     "idle",
   );
   const [url, setUrl] = useState<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => {
+      abortRef.current?.abort();
+    };
+  }, []);
 
   async function create() {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
     setState("creating");
     try {
-      const resp = await createShare(report);
+      const resp = await createShare(report, controller.signal);
+      // If aborted between resolution and here, bail out without setting state.
+      if (controller.signal.aborted) return;
       const fullUrl = `${window.location.origin}${resp.url}`;
       setUrl(fullUrl);
       setState("done");
-    } catch {
+    } catch (e) {
+      if (controller.signal.aborted) return;
+      // AbortError surfaces as a DOMException; treat it as a silent cancel
+      if (e instanceof DOMException && e.name === "AbortError") return;
       setState("error");
     }
   }
 
   function reset() {
+    abortRef.current?.abort();
+    abortRef.current = null;
     setState("idle");
     setUrl(null);
     onClose();

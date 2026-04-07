@@ -39,14 +39,17 @@ export async function analyzeZip(
 
 /**
  * POST /share — freeze a report as a shareable 30-day snapshot.
+ * Pass an AbortSignal to cancel on dialog close.
  */
 export async function createShare(
   report: WhoopReport,
+  signal?: AbortSignal,
 ): Promise<ShareCreateResponse> {
   const resp = await fetch(`${apiBase()}/share`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ report }),
+    signal,
   });
   if (!resp.ok) {
     let body: ApiErrorBody | null = null;
