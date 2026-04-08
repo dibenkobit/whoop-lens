@@ -2,6 +2,17 @@
 
 These are findings from per-task code-quality reviews that the plan text specifies as-is (so deviating in their original task would break spec compliance) but should be revisited during the polish pass.
 
+## From Task 10 review (ae3e5ec)
+
+- **`ConsistencyStrip` clamp inconsistency.** `apps/web/src/components/report/ConsistencyStrip.tsx:37-38` clamps `left` with `Math.max(leftPct, 0)` but uses the unclamped `leftPct` in `Math.min(widthPct, 100 - leftPct)`. For a bedtime before 18:00 (rare nap case) the bar visually overstates duration. Either widen `STRIP_START` or make the two clamps consistent.
+- **`Hypnogram` is dead code in v1** because backend always returns `hypnogram_sample = null`. When backend ships per-night data, revisit:
+  1. `Hypnogram.tsx:58` segment key `${seg.from}-${seg.stage}` collides on adjacent same-stage segments — add an index to the key.
+  2. `Hypnogram.tsx:53` per-segment `width` has no `Math.max(..., 0)` guard for malformed `t1 < t0` data.
+  3. `Hypnogram.tsx:42-54` row background labels ("Awake"/"REM"/...) are covered by segment bars when nights are fully populated — move the legend outside the plot area.
+- **`SleepStageBreakdown.tsx:58` dead `|| 0` fallback.** `r.pct` is typed `number`; the `||` is dead code. Trivial cleanup.
+- **`SleepStageBreakdown.tsx:37` `pct: 0` as in-band sentinel.** Using `0` to mean "hide bar and percentage" conflates a real value with a UI flag. A `showBar: false` field would be cleaner. Plan-faithful, deferred.
+- **Filter array literal allocated per render** — same observation as Task 9 (`SleepSection.tsx:20-28`). Hoist to module scope as a `Set` if you ever care.
+
 ## From Task 9 review (ee11175)
 
 - **`TrendLineChart` gradient hex assumption.** `${color}55` / `${color}00` at `apps/web/src/components/report/TrendLineChart.tsx:70-71` assumes `color` is a 6-digit hex string. Today the only caller passes `COLORS.recBlue` so it works, but the prop is typed `string`. A future caller passing `rgba(...)` or `#abc` would silently produce garbage. Either narrow the type, add a `withAlpha(hex, alpha)` helper, or accept the alpha separately.
