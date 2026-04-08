@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 import { ReportShell } from "@/components/report/ReportShell";
+import { JournalSection } from "@/components/report/sections/JournalSection";
 import { OverviewSection } from "@/components/report/sections/OverviewSection";
 import { RecoverySection } from "@/components/report/sections/RecoverySection";
 import { SleepSection } from "@/components/report/sections/SleepSection";
@@ -32,6 +33,7 @@ export default function ReportPage() {
         if (key === "sleep") return <SleepSection report={report} />;
         if (key === "strain") return <StrainSection report={report} />;
         if (key === "workouts") return <WorkoutsSection report={report} />;
+        if (key === "journal") return <JournalSection report={report} />;
         if (key === "trends") return <TrendsSection report={report} />;
         return (
           <div className="rounded-2xl bg-card p-5 text-sm text-text-2">
