@@ -2,6 +2,11 @@
 
 These are findings from per-task code-quality reviews that the plan text specifies as-is (so deviating in their original task would break spec compliance) but should be revisited during the polish pass.
 
+## From Task 15 review (dad06e2)
+
+- **`renderSection` exhaustiveness footgun.** `ReportShell.tsx:14` types `renderSection: (key: SectionKey) => ReactNode`. `ReactNode` includes `undefined`, so adding a new `SectionKey` will not produce a TypeScript error at the call sites in `SharedReportView.tsx` or `/report/page.tsx`; the new section will silently render nothing. Tighten via `satisfies` helper or per-key map. Plan-mandated dispatcher duplication makes this a real risk.
+- **No `error.tsx` for `/r/[id]`.** `getSharedReport` throws `ApiError` on 5xx. Server Component does not catch, falls through to Next's unbranded global error UI. Add a route-level `error.tsx` with the same visual language as `not-found.tsx` for branded server errors.
+
 ## From Task 14 review (9ed31f5)
 
 - **`JournalList` lacks horizontal overflow guard.** `JournalList.tsx:26` has no `overflow-x-auto` wrapper and the Question `<td>` has no `truncate`/`max-w`. Long question strings (Whoop questions can be 60+ chars) could push the table past Card width on narrow viewports. Same fix as the deferred `FirstVsLast` overflow item.
