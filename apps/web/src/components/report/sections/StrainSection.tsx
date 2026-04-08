@@ -21,7 +21,7 @@ export function StrainSection({ report }: { report: WhoopReport }) {
           color={COLORS.strain}
           display={d.value.toFixed(1)}
           label="Avg Strain"
-          sub={d.label.replace("_", " ")}
+          sub={d.label.replaceAll("_", " ")}
         />
       </div>
       <div className="flex flex-col gap-4">

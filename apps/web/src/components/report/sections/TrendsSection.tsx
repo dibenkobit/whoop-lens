@@ -23,8 +23,8 @@ export function TrendsSection({ report }: { report: WhoopReport }) {
           <FirstVsLast comparison={report.trends.first_vs_last_60d} />
         </div>
       </Card>
-      {trendInsights.map((i) => (
-        <InsightCard key={i.kind} insight={i} />
+      {trendInsights.map((i, idx) => (
+        <InsightCard key={`${i.kind}-${idx}`} insight={i} />
       ))}
     </div>
   );

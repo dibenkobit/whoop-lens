@@ -22,6 +22,7 @@ export function StrainDistribution({
     <div className="space-y-2">
       {ROWS.map((row) => {
         const value = distribution[row.key];
+        const clamped = Math.max(0, Math.min(100, value));
         return (
           <div key={row.key} className="flex items-center gap-3 text-xs">
             <div className="w-20 text-text-3">{row.label}</div>
@@ -29,14 +30,14 @@ export function StrainDistribution({
               <div
                 className="h-full rounded-sm"
                 style={{
-                  width: `${value}%`,
+                  width: `${clamped}%`,
                   backgroundColor: COLORS.strain,
                   opacity: row.tint,
                 }}
               />
             </div>
             <div className="w-10 text-right font-mono text-text-2">
-              {value.toFixed(0)}%
+              {clamped.toFixed(0)}%
             </div>
             <div className="w-12 text-text-3">{row.hint}</div>
           </div>

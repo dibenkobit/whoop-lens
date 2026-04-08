@@ -56,7 +56,7 @@ export function SleepStageBreakdown({ durations, pct }: Props) {
             <div
               className="h-full rounded-full"
               style={{
-                width: `${Math.min(r.pct || 0, 100)}%`,
+                width: `${Math.min(r.pct, 100)}%`,
                 backgroundColor: r.tone,
               }}
             />

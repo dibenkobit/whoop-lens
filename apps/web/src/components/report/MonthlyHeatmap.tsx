@@ -1,4 +1,5 @@
 import { recoveryColor } from "@/lib/colors";
+import { formatHoursDecimal, formatPct } from "@/lib/format";
 import type { MonthlyAgg } from "@/lib/types";
 
 export function MonthlyHeatmap({ monthly }: { monthly: MonthlyAgg[] }) {
@@ -27,7 +28,7 @@ export function MonthlyHeatmap({ monthly }: { monthly: MonthlyAgg[] }) {
                 className="py-2 text-right font-mono font-bold"
                 style={{ color: recoveryColor(m.recovery) }}
               >
-                {m.recovery.toFixed(0)}%
+                {formatPct(m.recovery)}
               </td>
               <td className="py-2 text-right font-mono text-text-primary">
                 {m.hrv.toFixed(0)}
@@ -36,7 +37,7 @@ export function MonthlyHeatmap({ monthly }: { monthly: MonthlyAgg[] }) {
                 {m.rhr.toFixed(1)}
               </td>
               <td className="py-2 text-right font-mono text-text-primary">
-                {m.sleep_h.toFixed(2)}h
+                {formatHoursDecimal(m.sleep_h, 2)}
               </td>
             </tr>
           ))}

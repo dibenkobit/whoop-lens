@@ -33,6 +33,8 @@ export function ConsistencyStrip({ strip }: Props) {
         const wake = wakeHours(row.wake_local);
         const leftPct = ((bed - STRIP_START) / STRIP_SPAN) * 100;
         const widthPct = ((wake - bed) / STRIP_SPAN) * 100;
+        const clampedLeft = Math.max(leftPct, 0);
+        const clampedWidth = Math.max(Math.min(widthPct, 100 - clampedLeft), 0);
         return (
           <div key={row.date} className="flex items-center gap-3">
             <div className="w-14 text-[10px] text-text-3">
@@ -42,8 +44,8 @@ export function ConsistencyStrip({ strip }: Props) {
               <div
                 className="absolute inset-y-0"
                 style={{
-                  left: `${Math.max(leftPct, 0)}%`,
-                  width: `${Math.max(Math.min(widthPct, 100 - leftPct), 0)}%`,
+                  left: `${clampedLeft}%`,
+                  width: `${clampedWidth}%`,
                   backgroundColor: COLORS.sleep,
                 }}
               />

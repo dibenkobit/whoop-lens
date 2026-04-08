@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 
 import { Footer } from "@/components/ui/Footer";
@@ -21,6 +21,10 @@ export const metadata: Metadata = {
   title: "Whoop Lens — visualize your Whoop data export",
   description:
     "Open-source report generator for Whoop data exports. Not affiliated with WHOOP, Inc.",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#101518",
 };
 
 export default function RootLayout({

@@ -49,40 +49,49 @@ export function FirstVsLast({ comparison }: { comparison: TrendComparison }) {
     },
   ];
   return (
-    <table className="w-full text-xs">
-      <thead>
-        <tr className="text-[10px] uppercase tracking-[0.12em] text-text-3">
-          <th className="text-left">Metric</th>
-          <th className="text-right">First 60 days</th>
-          <th className="text-right">Last 60 days</th>
-          <th className="text-right">Δ</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((row) => {
-          const improved = row.betterIfHigher
-            ? row.numericDelta > 0
-            : row.numericDelta < 0;
-          return (
-            <tr key={row.label} className="border-t border-white/5">
-              <td className="py-2 text-text-2">{row.label}</td>
-              <td className="py-2 text-right font-mono text-text-3">
-                {row.first}
-              </td>
-              <td className="py-2 text-right font-mono text-text-primary">
-                {row.last}
-              </td>
-              <td
-                className="py-2 text-right font-mono font-bold"
-                style={{ color: arrowColor(improved) }}
-              >
-                {row.numericDelta >= 0 ? "+" : ""}
-                {row.delta}
-              </td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+    <div className="overflow-x-auto">
+      <table className="w-full text-xs">
+        <thead>
+          <tr className="text-[10px] uppercase tracking-[0.12em] text-text-3">
+            <th className="text-left">Metric</th>
+            <th className="text-right">First 60 days</th>
+            <th className="text-right">Last 60 days</th>
+            <th className="text-right">Δ</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => {
+            const isNeutral = row.numericDelta === 0;
+            const improved =
+              !isNeutral &&
+              (row.betterIfHigher
+                ? row.numericDelta > 0
+                : row.numericDelta < 0);
+            return (
+              <tr key={row.label} className="border-t border-white/5">
+                <td className="py-2 text-text-2">{row.label}</td>
+                <td className="py-2 text-right font-mono text-text-3">
+                  {row.first}
+                </td>
+                <td className="py-2 text-right font-mono text-text-primary">
+                  {row.last}
+                </td>
+                <td
+                  className="py-2 text-right font-mono font-bold"
+                  style={{
+                    color: isNeutral
+                      ? "var(--color-text-3)"
+                      : arrowColor(improved),
+                  }}
+                >
+                  {row.numericDelta >= 0 ? "+" : ""}
+                  {row.delta}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }

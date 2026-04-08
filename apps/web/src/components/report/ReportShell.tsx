@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useState } from "react";
+import { type ReactElement, useState } from "react";
 
 import type { WhoopReport } from "@/lib/types";
 
@@ -11,7 +11,7 @@ import { type SectionKey, Sidebar } from "./Sidebar";
 type Props = {
   report: WhoopReport;
   canShare: boolean;
-  renderSection: (key: SectionKey) => ReactNode;
+  renderSection: (key: SectionKey) => ReactElement;
 };
 
 export function ReportShell({ report, canShare, renderSection }: Props) {

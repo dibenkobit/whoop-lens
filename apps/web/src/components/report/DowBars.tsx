@@ -23,7 +23,6 @@ export function DowBars({ entries }: Props) {
       {ORDER.map((dow) => {
         const e = byDow.get(dow);
         const value = e?.mean ?? 0;
-        const heightPct = (value / 100) * 100; // 0-100
         const color = e ? recoveryColor(value) : COLORS.text3;
         const dim = value < max * 0.7;
         return (
@@ -33,7 +32,7 @@ export function DowBars({ entries }: Props) {
                 className="absolute inset-x-0 bottom-0 rounded-sm"
                 style={{
                   backgroundColor: color,
-                  height: `${Math.max(heightPct, 2)}%`,
+                  height: `${Math.max(value, 2)}%`,
                   opacity: dim ? 0.65 : 1,
                 }}
               />

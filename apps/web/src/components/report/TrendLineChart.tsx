@@ -7,6 +7,13 @@ import { COLORS } from "@/lib/colors";
 import { echarts } from "@/lib/echarts";
 import type { TrendPoint } from "@/lib/types";
 
+function withAlpha(hex: string, alpha: number): string {
+  const a = Math.max(0, Math.min(255, Math.round(alpha * 255)))
+    .toString(16)
+    .padStart(2, "0");
+  return `${hex}${a}`;
+}
+
 const ReactECharts = dynamic(() => import("echarts-for-react/lib/core"), {
   ssr: false,
 });
@@ -71,8 +78,8 @@ export function TrendLineChart({
             x2: 0,
             y2: 1,
             colorStops: [
-              { offset: 0, color: `${color}55` },
-              { offset: 1, color: `${color}00` },
+              { offset: 0, color: withAlpha(color, 0.33) },
+              { offset: 1, color: withAlpha(color, 0) },
             ],
           },
         },
