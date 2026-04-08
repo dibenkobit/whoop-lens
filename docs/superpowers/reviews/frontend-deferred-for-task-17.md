@@ -2,6 +2,12 @@
 
 These are findings from per-task code-quality reviews that the plan text specifies as-is (so deviating in their original task would break spec compliance) but should be revisited during the polish pass.
 
+## From Task 14 review (9ed31f5)
+
+- **`JournalList` lacks horizontal overflow guard.** `JournalList.tsx:26` has no `overflow-x-auto` wrapper and the Question `<td>` has no `truncate`/`max-w`. Long question strings (Whoop questions can be 60+ chars) could push the table past Card width on narrow viewports. Same fix as the deferred `FirstVsLast` overflow item.
+- **`JournalList.tsx:43` `key={q.question}` collision risk.** Backend currently guarantees unique question strings; latent footgun if aggregation ever emits duplicates. Use index or composite key.
+- **Zero-delta coloring asymmetry** in `JournalList.tsx:11,13` — same as the deferred `FirstVsLast` zero-delta item. `d >= 0` colors zero green. Treat zero as neutral.
+
 ## From Task 13 review (d20e64e)
 
 - **`MonthlyHeatmap` doesn't use `lib/format` helpers.** `MonthlyHeatmap.tsx:39` uses `toFixed(2)` for `sleep_h`; rest of the app standardizes via `formatHoursDecimal` etc. Same drift on recovery/HRV/RHR. Route through the helpers for consistency.
