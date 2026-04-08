@@ -1,8 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-
 import { ReportShell } from "@/components/report/ReportShell";
 import { JournalSection } from "@/components/report/sections/JournalSection";
 import { OverviewSection } from "@/components/report/sections/OverviewSection";
@@ -11,22 +8,13 @@ import { SleepSection } from "@/components/report/sections/SleepSection";
 import { StrainSection } from "@/components/report/sections/StrainSection";
 import { TrendsSection } from "@/components/report/sections/TrendsSection";
 import { WorkoutsSection } from "@/components/report/sections/WorkoutsSection";
-import { useReport } from "@/context/ReportContext";
+import type { WhoopReport } from "@/lib/types";
 
-export default function ReportPage() {
-  const router = useRouter();
-  const { report } = useReport();
-
-  useEffect(() => {
-    if (!report) router.replace("/");
-  }, [report, router]);
-
-  if (!report) return null;
-
+export function SharedReportView({ report }: { report: WhoopReport }) {
   return (
     <ReportShell
       report={report}
-      canShare={true}
+      canShare={false}
       renderSection={(key) => {
         switch (key) {
           case "overview":
