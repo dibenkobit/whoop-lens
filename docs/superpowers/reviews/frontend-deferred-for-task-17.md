@@ -2,6 +2,15 @@
 
 These are findings from per-task code-quality reviews that the plan text specifies as-is (so deviating in their original task would break spec compliance) but should be revisited during the polish pass.
 
+## From Task 13 review (d20e64e)
+
+- **`MonthlyHeatmap` doesn't use `lib/format` helpers.** `MonthlyHeatmap.tsx:39` uses `toFixed(2)` for `sleep_h`; rest of the app standardizes via `formatHoursDecimal` etc. Same drift on recovery/HRV/RHR. Route through the helpers for consistency.
+- **`FirstVsLast` lacks `overflow-x-auto` wrapper.** `MonthlyHeatmap.tsx:11-12` is correctly wrapped; `FirstVsLast.tsx:52` is not. One-line consistency fix that removes a narrow-viewport footgun.
+- **`FirstVsLast` zero-delta is colored as the negative direction.** `numericDelta === 0` produces `"+0.00"` colored red regardless of `betterIfHigher`. Add a neutral branch when delta is exactly zero. `FirstVsLast.tsx:62-65,79`.
+- **`FirstVsLast` bedtime delta has no unit.** Other rows show units (`h`, `bpm`); bedtime delta is bare. Append `h` or add a `(h)` hint to the column.
+- **`FirstVsLast` row state duplication.** Both `delta: string` and `numericDelta: number` are stored. Could derive `delta` from `numericDelta` at render. `FirstVsLast.tsx:3-10,17-50`.
+- **`TrendsSection` insight key footgun.** `key={i.kind}` collides if backend ever emits multiple `long_term_trend` insights. Use `${i.kind}-${idx}`. `TrendsSection.tsx:27`.
+
 ## From Task 11 review (d0c8066)
 
 - **`StrainDistribution.tsx:32` width has no clamp.** `width: \`${value}%\`` accepts any `number` from the backend. Track has `overflow-hidden` so positive overflow is absorbed, but negatives would yield invalid CSS. Add `Math.max(0, Math.min(100, value))` if touched again.
