@@ -14,6 +14,7 @@
     "check": "biome check && tsc --noEmit && vitest run && next build"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "clsx": "^2.1.1",
     "echarts": "^6.0.0",
     "echarts-for-react": "^3.0.6",
