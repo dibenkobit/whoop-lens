@@ -1,0 +1,40 @@
+## Vercel Speed Insights Installation
+
+Successfully installed and configured Vercel Speed Insights for the whoop-lens Next.js application.
+
+### Changes Made
+
+**1. Package Installation:**
+- Installed `@vercel/speed-insights` version 2.0.0 using pnpm
+- Added dependency to `package.json`
+- Generated `pnpm-lock.yaml` lockfile
+
+**2. Code Integration:**
+- Modified `apps/web/src/app/layout.tsx`:
+  - Added import: `import { SpeedInsights } from "@vercel/speed-insights/next";`
+  - Added `<SpeedInsights />` component at the end of the `<body>` tag (after ReportProvider)
+  - Fixed import ordering to comply with Biome linter rules (third-party imports before Next.js imports)
+
+**3. Verification:**
+- ✅ Build completed successfully with `pnpm run build`
+- ✅ Linter passed with `pnpm run lint` (no errors)
+- ✅ All 41 tests passed with `pnpm run test`
+- ✅ No regressions introduced
+
+### Implementation Details
+
+Following the official Vercel Speed Insights documentation (fetched from https://vercel.com/docs/speed-insights/quickstart), I used the Next.js App Router integration method since this project uses:
+- Next.js 16.2.2 (App Router)
+- TypeScript
+- React 19.2.4
+
+The `SpeedInsights` component from `@vercel/speed-insights/next` was added to the root layout to enable speed monitoring across all pages. The component will automatically track Core Web Vitals and other performance metrics when deployed to Vercel.
+
+### Next Steps
+
+To complete the setup:
+1. Deploy the application to Vercel
+2. Navigate to the Vercel dashboard and enable Speed Insights for the project
+3. Verify that speed metrics are being collected after deployment
+
+No additional configuration or environment variables are required.

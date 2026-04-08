@@ -1,3 +1,4 @@
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
@@ -41,6 +42,7 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
           <Footer />
         </ReportProvider>
+        <SpeedInsights />
         <Analytics />
       </body>
     </html>
