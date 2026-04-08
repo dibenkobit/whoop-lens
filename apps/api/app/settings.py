@@ -24,6 +24,19 @@ class Settings(BaseSettings):
             return [origin.strip() for origin in v.split(",") if origin.strip()]
         return v
 
+    @field_validator("database_url", mode="after")
+    @classmethod
+    def ensure_async_driver(cls, v: str) -> str:
+        # Normalize any Postgres URL to use the asyncpg driver. Railway's
+        # managed Postgres exposes DATABASE_URL as `postgresql://...`, but
+        # both the app engine and Alembic env use SQLAlchemy's async API,
+        # which requires an explicit async driver.
+        if v.startswith("postgres://"):
+            v = "postgresql://" + v[len("postgres://") :]
+        if v.startswith("postgresql://") and "+asyncpg" not in v:
+            v = "postgresql+asyncpg://" + v[len("postgresql://") :]
+        return v
+
 
 @lru_cache
 def get_settings() -> Settings:

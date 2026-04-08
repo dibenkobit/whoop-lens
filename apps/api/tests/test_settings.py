@@ -24,3 +24,24 @@ def test_settings_requires_database_url(monkeypatch: pytest.MonkeyPatch) -> None
     monkeypatch.delenv("DATABASE_URL", raising=False)
     with pytest.raises(ValidationError):
         Settings()
+
+
+def test_database_url_normalizes_postgresql_scheme(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("DATABASE_URL", "postgresql://u:p@h:5432/db")
+    assert Settings().database_url == "postgresql+asyncpg://u:p@h:5432/db"
+
+
+def test_database_url_normalizes_legacy_postgres_scheme(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("DATABASE_URL", "postgres://u:p@h:5432/db")
+    assert Settings().database_url == "postgresql+asyncpg://u:p@h:5432/db"
+
+
+def test_database_url_preserves_explicit_asyncpg(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("DATABASE_URL", "postgresql+asyncpg://u:p@h:5432/db")
+    assert Settings().database_url == "postgresql+asyncpg://u:p@h:5432/db"
