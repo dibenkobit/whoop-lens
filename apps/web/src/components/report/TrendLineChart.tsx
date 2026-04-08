@@ -15,12 +15,16 @@ type Props = {
   trend: TrendPoint[];
   color?: string;
   height?: number;
+  min?: number;
+  max?: number;
 };
 
 export function TrendLineChart({
   trend,
   color = COLORS.recBlue,
   height = 140,
+  min = 0,
+  max = 100,
 }: Props) {
   const dates = trend.map((p) => p.date);
   const values = trend.map((p) => (p.value === null ? null : p.value));
@@ -38,8 +42,8 @@ export function TrendLineChart({
     },
     yAxis: {
       type: "value",
-      min: 0,
-      max: 100,
+      min,
+      max,
       splitNumber: 4,
       axisLine: { show: false },
       axisTick: { show: false },
