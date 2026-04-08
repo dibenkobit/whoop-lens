@@ -23,6 +23,11 @@ uv run pytest
    - `LOG_LEVEL=INFO`
 5. Deploy. Health is at `/healthz`.
 
+Builder is [Railpack](https://railpack.com) (set in `railway.toml`). It auto-detects
+`uv.lock` and `.python-version` (3.13), so no extra build config is needed. The
+start command in `railway.toml` runs `alembic upgrade head` before launching
+`uvicorn`.
+
 ## Env vars
 
 | Key | Default | Notes |
