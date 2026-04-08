@@ -20,7 +20,7 @@ export function Footer() {
             About
           </Link>
           <a
-            href="https://github.com/whoop-lens/whoop-lens"
+            href="https://github.com/dibenkobit/whoop-lens"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-text-primary"
