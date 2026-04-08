@@ -2,6 +2,12 @@
 
 These are findings from per-task code-quality reviews that the plan text specifies as-is (so deviating in their original task would break spec compliance) but should be revisited during the polish pass.
 
+## From Task 11 review (d0c8066)
+
+- **`StrainDistribution.tsx:32` width has no clamp.** `width: \`${value}%\`` accepts any `number` from the backend. Track has `overflow-hidden` so positive overflow is absorbed, but negatives would yield invalid CSS. Add `Math.max(0, Math.min(100, value))` if touched again.
+- **`StrainSection.tsx:24` `replace("_", " ")` only replaces the first underscore.** Works for the current `"all_out"` label union but breaks silently on any future double-underscore variant. Use `.replaceAll("_", " ")` — same cost, future-proof.
+- **`StrainDistribution` opacity tinting** lets the `bg-black/40` track bleed through on lower-tint rows. Pre-mixed colors via `color-mix` would give cleaner bars. Visual polish only.
+
 ## From Task 10 review (ae3e5ec)
 
 - **`ConsistencyStrip` clamp inconsistency.** `apps/web/src/components/report/ConsistencyStrip.tsx:37-38` clamps `left` with `Math.max(leftPct, 0)` but uses the unclamped `leftPct` in `Math.min(widthPct, 100 - leftPct)`. For a bedtime before 18:00 (rare nap case) the bar visually overstates duration. Either widen `STRIP_START` or make the two clamps consistent.
