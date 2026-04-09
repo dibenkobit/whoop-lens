@@ -46,14 +46,14 @@ export function JournalList({
                 className="border-t border-white/5"
               >
                 <td className="py-2 text-text-2">{q.question}</td>
-                <td className="py-2 text-right font-mono text-text-primary">
+                <td className="py-2 text-right text-text-primary">
                   {q.yes}
                 </td>
-                <td className="py-2 text-right font-mono text-text-3">
+                <td className="py-2 text-right text-text-3">
                   {q.no}
                 </td>
                 <td
-                  className="py-2 text-right font-mono font-bold"
+                  className="py-2 text-right font-bold"
                   style={{ color: d.tone }}
                 >
                   {d.value}

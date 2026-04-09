@@ -8,7 +8,7 @@ function Cell({ item }: { item: Item }) {
       <div className="text-[10px] uppercase tracking-[0.18em] text-text-3">
         {item.label}
       </div>
-      <div className="mt-1 font-mono text-base font-bold text-text-primary">
+      <div className="mt-1 text-base font-bold text-text-primary">
         {item.value}
         {item.unit ? (
           <span className="ml-1 text-xs font-normal text-text-3">

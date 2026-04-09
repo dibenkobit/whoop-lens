@@ -54,7 +54,7 @@ export function Dropzone({ onFile, onReject, disabled }: Props) {
       <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-text-3">
         Step 1
       </div>
-      <h2 className="mt-2 font-mono text-3xl font-bold text-text-primary">
+      <h2 className="mt-2 text-3xl font-bold text-text-primary">
         Drop your <span className="text-teal">my_whoop_data</span>.zip
       </h2>
       <p className="mt-4 max-w-lg text-sm leading-relaxed text-text-2">

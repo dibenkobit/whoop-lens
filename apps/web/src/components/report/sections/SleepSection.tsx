@@ -45,17 +45,17 @@ export function SleepSection({ report }: { report: WhoopReport }) {
           <div className="mt-3 space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-text-3">Avg bedtime</span>
-              <span className="font-mono text-text-primary">
+              <span className="text-text-primary">
                 {s.avg_bedtime}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-text-3">Avg wake</span>
-              <span className="font-mono text-text-primary">{s.avg_wake}</span>
+              <span className="text-text-primary">{s.avg_wake}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-text-3">Bedtime std</span>
-              <span className="font-mono text-text-primary">
+              <span className="text-text-primary">
                 {s.bedtime_std_h.toFixed(1)}h
               </span>
             </div>

@@ -18,7 +18,7 @@ export function InsightCard({ insight }: { insight: Insight }) {
         {insight.title}
       </h3>
       <div className="flex items-baseline gap-2">
-        <span className="font-mono text-2xl font-bold text-text-primary">
+        <span className="text-2xl font-bold text-text-primary">
           {insight.highlight.value}
         </span>
         {insight.highlight.unit ? (

@@ -73,10 +73,10 @@ export default function Page() {
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-8 px-6 py-20">
       <header className="text-center">
-        <div className="font-mono text-[11px] uppercase tracking-[0.24em] text-text-3">
+        <div className="text-[11px] uppercase tracking-[0.24em] text-text-3">
           WHOOP·LENS
         </div>
-        <h1 className="mt-3 font-mono text-4xl font-bold leading-tight text-text-primary">
+        <h1 className="mt-3 text-4xl font-bold leading-tight text-text-primary">
           Your Whoop data,
           <br />
           <span className="text-teal">visualized.</span>

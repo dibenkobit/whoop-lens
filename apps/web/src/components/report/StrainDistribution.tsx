@@ -36,7 +36,7 @@ export function StrainDistribution({
                 }}
               />
             </div>
-            <div className="w-10 text-right font-mono text-text-2">
+            <div className="w-10 text-right text-text-2">
               {clamped.toFixed(0)}%
             </div>
             <div className="w-12 text-text-3">{row.hint}</div>

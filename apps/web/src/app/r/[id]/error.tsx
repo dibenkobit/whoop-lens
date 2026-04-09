@@ -16,10 +16,10 @@ export default function SharedRouteError({
 
   return (
     <div className="mx-auto max-w-xl px-6 py-24 text-center">
-      <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-3">
+      <div className="text-[11px] uppercase tracking-[0.2em] text-text-3">
         Error
       </div>
-      <h1 className="mt-3 font-mono text-3xl font-bold text-text-primary">
+      <h1 className="mt-3 text-3xl font-bold text-text-primary">
         Something went wrong
       </h1>
       <p className="mt-4 text-sm text-text-2">

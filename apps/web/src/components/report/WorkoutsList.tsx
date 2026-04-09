@@ -10,11 +10,11 @@ export function WorkoutsList({ items }: { items: ActivityAgg[] }) {
           className="grid grid-cols-[1fr_80px_80px_60px] items-center gap-3 text-xs"
         >
           <div className="truncate text-text-primary">{item.name}</div>
-          <div className="text-right font-mono text-text-2">{item.count}×</div>
-          <div className="text-right font-mono text-text-2">
+          <div className="text-right text-text-2">{item.count}×</div>
+          <div className="text-right text-text-2">
             {formatHours(item.total_min)}
           </div>
-          <div className="text-right font-mono text-text-3">
+          <div className="text-right text-text-3">
             {item.pct_of_total_strain.toFixed(0)}%
           </div>
         </li>

@@ -17,17 +17,17 @@ export function TopStrainDays({ days }: { days: TopStrainDay[] }) {
         {days.map((d) => (
           <tr key={d.date} className="border-t border-white/5">
             <td className="py-1.5 text-text-2">{formatDate(d.date)}</td>
-            <td className="py-1.5 text-right font-mono text-text-primary">
+            <td className="py-1.5 text-right text-text-primary">
               {d.day_strain.toFixed(1)}
             </td>
             <td
-              className="py-1.5 text-right font-mono"
+              className="py-1.5 text-right"
               style={{ color: recoveryColor(d.recovery) }}
             >
               {d.recovery.toFixed(0)}%
             </td>
             <td
-              className="py-1.5 text-right font-mono"
+              className="py-1.5 text-right"
               style={{
                 color:
                   d.next_recovery === null

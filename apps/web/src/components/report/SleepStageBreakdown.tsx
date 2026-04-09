@@ -45,7 +45,7 @@ export function SleepStageBreakdown({ durations, pct }: Props) {
         <div key={r.label}>
           <div className="flex justify-between text-[11px] text-text-2">
             <span>{r.label}</span>
-            <span className="font-mono">
+            <span>
               {formatHours(r.minutes)}
               {r.pct > 0 ? (
                 <span className="ml-2 text-text-3">{r.pct.toFixed(0)}%</span>

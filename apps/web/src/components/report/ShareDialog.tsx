@@ -79,7 +79,7 @@ export function ShareDialog({ open, onClose, report }: Props) {
           <p className="text-sm text-text-2">
             Your share link (valid 30 days):
           </p>
-          <div className="mt-3 break-all rounded-md bg-black/40 px-3 py-2 font-mono text-xs">
+          <div className="mt-3 break-all rounded-md bg-black/40 px-3 py-2 text-xs">
             {url}
           </div>
           <div className="mt-6 flex justify-end gap-3">

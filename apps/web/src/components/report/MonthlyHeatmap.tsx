@@ -23,20 +23,20 @@ export function MonthlyHeatmap({ monthly }: { monthly: MonthlyAgg[] }) {
         <tbody>
           {monthly.map((m) => (
             <tr key={m.month} className="border-t border-white/5">
-              <td className="py-2 font-mono text-text-2">{m.month}</td>
+              <td className="py-2 text-text-2">{m.month}</td>
               <td
-                className="py-2 text-right font-mono font-bold"
+                className="py-2 text-right font-bold"
                 style={{ color: recoveryColor(m.recovery) }}
               >
                 {formatPct(m.recovery)}
               </td>
-              <td className="py-2 text-right font-mono text-text-primary">
+              <td className="py-2 text-right text-text-primary">
                 {m.hrv.toFixed(0)}
               </td>
-              <td className="py-2 text-right font-mono text-text-primary">
+              <td className="py-2 text-right text-text-primary">
                 {m.rhr.toFixed(1)}
               </td>
-              <td className="py-2 text-right font-mono text-text-primary">
+              <td className="py-2 text-right text-text-primary">
                 {formatHoursDecimal(m.sleep_h, 2)}
               </td>
             </tr>

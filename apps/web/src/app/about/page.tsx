@@ -3,10 +3,10 @@ import Link from "next/link";
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-2xl px-6 py-16">
-      <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-3">
+      <div className="text-[11px] uppercase tracking-[0.2em] text-text-3">
         About
       </div>
-      <h1 className="mt-3 font-mono text-3xl font-bold text-text-primary">
+      <h1 className="mt-3 text-3xl font-bold text-text-primary">
         Whoop Lens
       </h1>
       <p className="mt-6 text-sm leading-relaxed text-text-2">
@@ -36,7 +36,7 @@ export default function AboutPage() {
       <p className="mt-3 text-sm text-text-2">
         Your ZIP should contain these files at the top level:
       </p>
-      <ul className="mt-2 list-disc space-y-1 pl-5 font-mono text-xs text-text-primary">
+      <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-text-primary">
         <li>physiological_cycles.csv (required)</li>
         <li>sleeps.csv (required)</li>
         <li>workouts.csv (optional)</li>

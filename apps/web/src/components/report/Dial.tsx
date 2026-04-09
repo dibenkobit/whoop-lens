@@ -38,7 +38,7 @@ export function Dial({ value, max, color, display, label, sub }: Props) {
           opts={{ renderer: "canvas" }}
         />
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <span className="font-mono text-3xl font-bold tracking-tight text-text-primary">
+          <span className="text-3xl font-bold tracking-tight text-text-primary">
             {display}
           </span>
         </div>

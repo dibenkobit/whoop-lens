@@ -70,14 +70,14 @@ export function FirstVsLast({ comparison }: { comparison: TrendComparison }) {
             return (
               <tr key={row.label} className="border-t border-white/5">
                 <td className="py-2 text-text-2">{row.label}</td>
-                <td className="py-2 text-right font-mono text-text-3">
+                <td className="py-2 text-right text-text-3">
                   {row.first}
                 </td>
-                <td className="py-2 text-right font-mono text-text-primary">
+                <td className="py-2 text-right text-text-primary">
                   {row.last}
                 </td>
                 <td
-                  className="py-2 text-right font-mono font-bold"
+                  className="py-2 text-right font-bold"
                   style={{
                     color: isNeutral
                       ? "var(--color-text-3)"

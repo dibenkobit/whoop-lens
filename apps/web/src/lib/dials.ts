@@ -42,6 +42,6 @@ export function buildDialOption(input: DialInput): EChartsOption {
       },
     ],
     // Actual text rendering is handled in JSX; keep ECharts option purely visual
-    textStyle: { color: COLORS.textPrimary, fontFamily: "var(--font-mono)" },
+    textStyle: { color: COLORS.textPrimary, fontFamily: "var(--font-sans)" },
   };
 }
