@@ -45,7 +45,7 @@ export function Dropzone({ onFile, onReject, disabled }: Props) {
     <div
       {...getRootProps()}
       className={clsx(
-        "group flex min-h-[280px] cursor-pointer flex-col items-center justify-center rounded-3xl border-2 border-dashed border-white/15 bg-card/50 px-8 py-12 text-center transition",
+        "group flex min-h-[280px] cursor-pointer flex-col items-center justify-center rounded-3xl border-2 border-dashed border-white/15 bg-card/50 px-8 py-12 text-center transition-all duration-300 hover:border-teal/60",
         isDragActive && "border-teal bg-teal/5",
         disabled && "pointer-events-none opacity-60",
       )}
