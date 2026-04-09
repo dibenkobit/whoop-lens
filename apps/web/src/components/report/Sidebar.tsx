@@ -41,7 +41,7 @@ export function Sidebar({ active, onChange, report }: Props) {
         WHOOP·LENS
       </div>
       <nav>
-        <ul className="space-y-1">
+        <ul className="space-y-0.5">
           {sections.map((s) => (
             <li key={s.key}>
               <button
@@ -51,7 +51,7 @@ export function Sidebar({ active, onChange, report }: Props) {
                   "w-full rounded-md px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.1em] transition",
                   s.key === active
                     ? "bg-white/5 text-text-primary"
-                    : "text-text-2 hover:text-text-primary",
+                    : "cursor-pointer text-text-2 hover:bg-white/[0.03] hover:text-text-primary",
                 )}
               >
                 {s.label}
