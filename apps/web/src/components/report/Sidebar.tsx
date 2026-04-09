@@ -37,7 +37,7 @@ export function Sidebar({ active, onChange, report }: Props) {
   });
   return (
     <aside className="flex flex-col border-r border-white/5 bg-black/20 p-5">
-      <div className="mb-8 font-mono text-base font-extrabold tracking-[0.18em]">
+      <div className="mb-8 font-semibold tracking-[0.18em] text-text-2">
         WHOOP·LENS
       </div>
       <nav>
