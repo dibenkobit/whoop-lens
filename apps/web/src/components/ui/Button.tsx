@@ -27,7 +27,7 @@ export function Button({
     <button
       type="button"
       className={clsx(
-        "inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-xs font-bold uppercase tracking-[0.1em] transition",
+        "inline-flex cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-2 text-xs font-bold uppercase tracking-[0.1em] transition",
         variantClass[variant],
         className,
       )}
