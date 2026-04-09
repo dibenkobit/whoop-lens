@@ -3,6 +3,8 @@
 import { clsx } from "clsx";
 
 import type { WhoopReport } from "@/lib/types";
+import { Disclaimer } from "@/components/ui/Disclaimer";
+import { ExternalLinks } from "@/components/ui/ExternalLinks";
 
 export type SectionKey =
   | "overview"
@@ -36,7 +38,7 @@ export function Sidebar({ active, onChange, report }: Props) {
     return true;
   });
   return (
-    <aside className="flex flex-col overflow-y-auto border-r border-white/5 bg-black/20 p-5">
+    <aside className="flex flex-col overflow-y-auto border-r border-white/5 bg-black/20 p-3">
       <div className="mb-8 font-semibold tracking-[0.18em] text-text-2">
         WHOOP·LENS
       </div>
@@ -60,6 +62,8 @@ export function Sidebar({ active, onChange, report }: Props) {
           ))}
         </ul>
       </nav>
+      <ExternalLinks className="mt-auto space-y-0.5 pt-8" />
+      <Disclaimer className="mt-3 text-[10px] leading-relaxed text-text-3" />
     </aside>
   );
 }

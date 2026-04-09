@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { Disclaimer } from "./Disclaimer";
+
 export function Footer() {
   return (
     <footer className="mt-16 border-t border-white/5 px-6 py-6 text-xs text-text-3">
@@ -11,11 +13,7 @@ export function Footer() {
             </span>{" "}
             — open source, MIT licensed.
           </p>
-          <p className="max-w-xl leading-relaxed">
-            Whoop Lens is an independent open-source project. Not affiliated
-            with, endorsed by, or sponsored by WHOOP, Inc. WHOOP is a trademark
-            of WHOOP, Inc.
-          </p>
+          <Disclaimer className="max-w-xl leading-relaxed" />
         </div>
         <nav className="flex shrink-0 flex-col items-end gap-2">
           <Link href="/about" className="hover:text-text-primary">
