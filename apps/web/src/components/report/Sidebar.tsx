@@ -36,7 +36,7 @@ export function Sidebar({ active, onChange, report }: Props) {
     return true;
   });
   return (
-    <aside className="flex flex-col border-r border-white/5 bg-black/20 p-5">
+    <aside className="flex flex-col overflow-y-auto border-r border-white/5 bg-black/20 p-5">
       <div className="mb-8 font-semibold tracking-[0.18em] text-text-2">
         WHOOP·LENS
       </div>

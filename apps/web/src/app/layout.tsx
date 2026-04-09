@@ -3,7 +3,6 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 
-import { Footer } from "@/components/ui/Footer";
 import { ReportProvider } from "@/context/ReportContext";
 import "./globals.css";
 
@@ -33,8 +32,7 @@ export default function RootLayout({
     >
       <body className="min-h-screen flex flex-col">
         <ReportProvider>
-          <main className="flex-1">{children}</main>
-          <Footer />
+          {children}
         </ReportProvider>
         <SpeedInsights />
         <Analytics />
